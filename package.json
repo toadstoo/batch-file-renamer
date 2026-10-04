@@ -1,0 +1,22 @@
+{
+  "name": "batch-file-renamer",
+  "version": "1.0.0",
+  "description": "A flexible CLI tool to batch rename files with patterns, regex, prefix, suffix, and numbering.",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "renamer": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "rename",
+    "batch",
+    "files",
+    "cli",
+    "tool"
+  ],
+  "author": "",
+  "license": "MIT"
+}
