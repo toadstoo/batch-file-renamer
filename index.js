@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-
 function parseArgs() {
   const args = process.argv.slice(2);
   const options = {
@@ -10,7 +9,7 @@ function parseArgs() {
     suffix: '',
     replace: null,
     with: '',
-    case: null, // 'lower', 'upper', 'kebab', 'snake'
+    case: null,
     numbering: false,
     pad: 3,
     startNum: 1,
@@ -50,6 +49,34 @@ function transformCase(text, caseType) {
       return text.toUpperCase();
     case 'kebab':
       return text.trim().replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[\s_]+/g, '-').toLowerCase();
+    case 'snake':
+      return text.trim().replace(/([a-z])([A-Z])/g, '$1_$2').replace(/[\s-]+/g, '_').toLowerCase();
+    default:
+      return text;
+  }
+}
+
+function showHelp() {
+  console.log(`
+Batch File Renamer CLI
+Usage: node index.js [options]
+
+Options:
+  -d, --dir <path>       Directory containing files (default: './files')
+  -p, --prefix <str>     Add prefix to filenames
+  -s, --suffix <str>     Add suffix to filenames
+  -r, --replace <regex>  Regex/string to find
+  -w, --with <str>       String to replace with
+  -c, --case <type>      Transform case (lower, upper, kebab, snake)
+  -n, --numbering        Add numbering (e.g., 001_filename.ext)
+  --pad <num>            Padding for numbering (default: 3)
+  --start <num>          Starting number (default: 1)
+  -e, --ext <ext>        Filter by extension
+  --dry-run              Simulate changes without renaming
+  --recursive            Process files recursively
+  -h, --help             Show this help
+`);
+}
 
 async function getFiles(dir, recursive = false) {
   let entries;
@@ -76,9 +103,9 @@ async function main() {
   const options = parseArgs();
   const targetDir = path.resolve(process.cwd(), options.dir);
 
-  console.log(`\n Сканирование папки: ${targetDir}`);
+  console.log(`\nСканирование папки: ${targetDir}`);
   if (options.dryRun) {
-    console.log(' Режим: DRY RUN (тестовый запуск, файлы не будут изменены)\n');
+    console.log('Режим: DRY RUN (тестовый запуск, файлы не будут изменены)\n');
   }
 
   try {
@@ -91,7 +118,7 @@ async function main() {
     });
 
     if (filteredFiles.length === 0) {
-      console.log(' Подходящие файлы для переименования не найдены.');
+      console.log('Подходящие файлы для переименования не найдены.');
       return;
     }
 
@@ -143,18 +170,11 @@ async function main() {
       }
     }
 
-    console.log(`\n Готово! Всего переименовано: ${renamedCount} файлов.`);
+    console.log(`\nГотово! Всего переименовано: ${renamedCount} файлов.`);
   } catch (error) {
-    console.error(`\n Ошибка: ${error.message}`);
+    console.error(`\nОшибка: ${error.message}`);
     process.exit(1);
   }
 }
 
 main();
-
-    case 'snake':
-      return text.trim().replace(/([a-z])([A-Z])/g, '$1_$2').replace(/[\s-]+/g, '_').toLowerCase();
-    default:
-      return text;
-  }
-}
